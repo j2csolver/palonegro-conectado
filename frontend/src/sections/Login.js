@@ -14,7 +14,6 @@ export default function Login() {
     e.preventDefault();
     setError('');
     try {
-      // Cambia la URL por la de tu backend
       const res = await fetch('http://localhost:4000/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -26,6 +25,8 @@ export default function Login() {
       }
       const data = await res.json();
       setUser(data.user);
+      // Si usas token:
+      // localStorage.setItem('token', data.token);
       navigate('/dashboard');
     } catch (err) {
       setError('Error de conexión');

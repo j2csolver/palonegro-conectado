@@ -36,6 +36,14 @@ const allSections = [
     roles: ['Administrador', 'Residente']
   },
   {
+    title: 'Encuestas',
+    path: '/encuestas',
+    color: '#007bff',
+    icon: '🗳️',
+    desc: 'Participa en encuestas y votaciones comunitarias.',
+    roles: ['Residente', 'Administrador']
+  },
+  {
     title: 'Tesorería',
     path: '/tesoreria',
     color: '#28a745',

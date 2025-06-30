@@ -8,7 +8,7 @@ import Quejas from './sections/Quejas';
 import Tesoreria from './sections/Tesoreria';
 import Historial from './sections/Historial';
 import ResumenFinanciero from './sections/ResumenFinanciero';
-import Blog from './sections/Blog';
+import Inicio from './sections/Inicio';
 import Login from './sections/Login';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AppProvider } from './context/AppContext';
@@ -28,12 +28,13 @@ function AppContent() {
           {!user && (
             <>
               {/* Rutas públicas */}
-              <Route path="/blog" element={<Blog />} />
+              <Route path="/inicio" element={<Inicio />} />
               <Route path="/noticias" element={<Noticias />} />
-              <Route path="/eventos" element={<Eventos />} />
+              <Route path="/reglas" element={<Reglas />} />
+              <Route path="/quejas" element={<Quejas />} />
               <Route path="/login" element={<Login />} />
-              {/* Redirige todo lo demás a /blog */}
-              <Route path="*" element={<Navigate to="/blog" />} />
+              {/* Redirige todo lo demás a /inicio */}
+              <Route path="*" element={<Navigate to="/inicio" />} />
             </>
           )}
 
@@ -46,7 +47,7 @@ function AppContent() {
           {user?.rol === 'Residente' && (
             <Route path="/dashboard" element={<ResidenteDashboard />} />
           )}
-          {/* Si hay usuario, redirige la raíz a su dashboard */}
+          {/* Si hay usuario, redirige todo lo demás a su dashboard */}
           {user && (
             <Route path="*" element={<Navigate to="/dashboard" />} />
           )}

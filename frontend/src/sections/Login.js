@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import styles from './Login.module.css';
 
 export default function Login() {
   const { setUser } = useAuth();
@@ -24,10 +25,7 @@ export default function Login() {
         return;
       }
       const data = await res.json();
-      // data.user debe tener { id, nombre, rol, ... }
       setUser(data.user);
-      // Puedes guardar el token en localStorage si lo necesitas
-      // localStorage.setItem('token', data.token);
       navigate('/dashboard');
     } catch (err) {
       setError('Error de conexión');
@@ -35,31 +33,39 @@ export default function Login() {
   };
 
   return (
-    <section>
-      <h2>Iniciar sesión</h2>
-      <form onSubmit={handleSubmit} style={{ maxWidth: 320 }}>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            autoFocus
-          />
+    <div className={styles.loginContainer}>
+      <div className={styles.loginTitle}>Acceder a tu cuenta</div>
+      <form className={styles.loginForm} onSubmit={handleSubmit}>
+        <div className={styles.loginField}>
+          <label className={styles.loginLabel}>Email</label>
+          <div className={styles.inputWrapper}>
+            <span className={styles.inputIcon}>📧</span>
+            <input
+              className={styles.loginInput}
+              type="email"
+              required
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              autoFocus
+            />
+          </div>
         </div>
-        <div>
-          <label>Contraseña:</label>
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
+        <div className={styles.loginField}>
+          <label className={styles.loginLabel}>Contraseña</label>
+          <div className={styles.inputWrapper}>
+            <span className={styles.inputIcon}>🔒</span>
+            <input
+              className={styles.loginInput}
+              type="password"
+              required
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
+          </div>
         </div>
-        {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
-        <button type="submit" style={{ marginTop: 12 }}>Entrar</button>
+        {error && <div className={styles.loginError}>{error}</div>}
+        <button className={styles.loginButton} type="submit">Ingresar</button>
       </form>
-    </section>
+    </div>
   );
 }

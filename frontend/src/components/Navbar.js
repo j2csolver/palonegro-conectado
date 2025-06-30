@@ -15,8 +15,10 @@ export default function Navbar() {
     <nav className={styles.nav}>
       <div className={styles.brand}>Palonegro Conectado</div>
       <div className={styles.links}>
-        <NavLink to="/blog" className={({ isActive }) => isActive ? styles.active : ''}>Inicio</NavLink>
-        {!user && <NavLink to="/login" className={({ isActive }) => isActive ? styles.active : ''}>Login</NavLink>}
+        <NavLink to="/inicio" className={({ isActive }) => isActive ? styles.active : ''}>Inicio</NavLink>
+        {!user && (
+          <NavLink to="/login" className={({ isActive }) => isActive ? styles.active : ''}>Acceder a tu cuenta</NavLink>
+        )}
         {user && (
           <button onClick={handleLogout} className={styles.logout}>Cerrar sesión</button>
         )}

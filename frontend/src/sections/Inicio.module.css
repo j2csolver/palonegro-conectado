@@ -10,12 +10,11 @@
 .card {
   display: flex;
   flex-direction: column;
-  align-items: center;         /* Centra horizontalmente */
-  justify-content: center;     /* Centra verticalmente */
-  background: #fff;
-  height: 200px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 180px;
   border-radius: 16px;
-  color: #232946;
+  color: #fff;
   font-size: 1.1rem;
   font-weight: 600;
   box-shadow: 0 4px 24px rgba(44, 62, 80, 0.08);
@@ -23,47 +22,28 @@
   transition: transform 0.15s, box-shadow 0.15s;
   position: relative;
   overflow: hidden;
-  padding: 1.5rem 1.2rem;
-  border: 1.5px solid #f8f9fa;
-  text-align: center;          /* Centra el texto dentro de la tarjeta */
+  padding: 1.5rem 1rem;
 }
 
 .card:hover {
   transform: translateY(-8px) scale(1.04);
   box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18);
-  opacity: 0.97;
-  border-color: #007bff33;
-}
-
-.iconBox {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  background: #f8f9fa;
-  width: 48px;
-  height: 48px;
-  margin-bottom: 1rem;
-  font-size: 2rem;
-  transition: background 0.2s;
+  opacity: 0.95;
 }
 
 .icon {
-  font-size: 2rem;
+  font-size: 2.2rem;
+  margin-bottom: 0.7rem;
 }
 
 .title {
   font-size: 1.15rem;
   letter-spacing: 1px;
   margin-bottom: 0.5rem;
-  color: #232946;
-  text-align: center;
 }
 
 .desc {
   font-size: 0.98rem;
   font-weight: 400;
   opacity: 0.93;
-  color: #232946;
-  text-align: center;
 }

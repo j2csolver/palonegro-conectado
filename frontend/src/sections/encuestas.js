@@ -6,3 +6,5 @@ export default function Encuestas() {
       <h2>Encuestas</h2>
       <p>Aquí podrás participar en encuestas y votaciones comunitarias.</p>
     </section>
+  );
+}

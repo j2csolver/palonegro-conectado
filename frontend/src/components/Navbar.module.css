@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #0056b3;      /* Azul más oscuro */
+  background: #0056b3;
   padding: 1rem 2rem;
   box-shadow: 0 2px 8px rgba(35, 41, 70, 0.08);
 }
@@ -10,7 +10,7 @@
 .brand {
   font-size: 1.6rem;
   font-weight: bold;
-  color: #fff;              /* Letras blancas */
+  color: #fff;
   letter-spacing: 1px;
 }
 
@@ -21,7 +21,7 @@
 }
 
 a {
-  color: #fff;              /* Letras blancas */
+  color: #fff;
   text-decoration: none;
   font-weight: 500;
   font-size: 1rem;
@@ -49,4 +49,30 @@ a:hover, .active {
 .logout:hover {
   background: #f8f9fa;
   color: #007bff;
+}
+
+/* Responsive styles */
+@media (max-width: 700px) {
+  .nav {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem 0.5rem;
+  }
+  .brand {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+  .links {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    align-items: stretch;
+  }
+  a, .logout {
+    width: 100%;
+    text-align: center;
+    padding: 0.7rem 0;
+    font-size: 1rem;
+  }
 }

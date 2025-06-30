@@ -60,42 +60,88 @@ export default function Login() {
   };
 
   return (
-    <div className={styles.loginContainer}>
-      <div className={styles.loginTitle}>Acceder a tu cuenta</div>
-      <form className={styles.loginForm} onSubmit={handleSubmit}>
-        <div className={styles.loginField}>
-          <label className={styles.loginLabel}>Email</label>
-          <div className={styles.inputWrapper}>
-            <span className={styles.inputIcon}>📧</span>
-            <input
-              className={styles.loginInput}
-              type="email"
-              required
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              autoFocus
-            />
+    <main>
+      <section
+        className={styles.loginContainer}
+        aria-label="Formulario de inicio de sesión"
+      >
+        <h1 className={styles.loginTitle}>Acceder a tu cuenta</h1>
+        <form
+          className={styles.loginForm}
+          onSubmit={handleSubmit}
+          aria-label="Formulario de acceso"
+        >
+          <div className={styles.loginField}>
+            <label
+              className={styles.loginLabel}
+              htmlFor="email"
+            >
+              Email
+            </label>
+            <div className={styles.inputWrapper}>
+              <span className={styles.inputIcon} aria-hidden="true">📧</span>
+              <input
+                className={styles.loginInput}
+                id="email"
+                type="email"
+                required
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                autoFocus
+                aria-required="true"
+                aria-label="Correo electrónico"
+              />
+            </div>
           </div>
-        </div>
-        <div className={styles.loginField}>
-          <label className={styles.loginLabel}>Contraseña</label>
-          <div className={styles.inputWrapper}>
-            <span className={styles.inputIcon}>🔒</span>
-            <input
-              className={styles.loginInput}
-              type="password"
-              required
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-            />
+          <div className={styles.loginField}>
+            <label
+              className={styles.loginLabel}
+              htmlFor="password"
+            >
+              Contraseña
+            </label>
+            <div className={styles.inputWrapper}>
+              <span className={styles.inputIcon} aria-hidden="true">🔒</span>
+              <input
+                className={styles.loginInput}
+                id="password"
+                type="password"
+                required
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                aria-required="true"
+                aria-label="Contraseña"
+              />
+            </div>
           </div>
-        </div>
-        {error && <div className={styles.loginError}>{error}</div>}
-        {success && <div className={styles.loginSuccess}>{success}</div>}
-        <button className={styles.loginButton} type="submit" disabled={loading}>
-          {loading ? <span className={styles.spinner}></span> : 'Ingresar'}
-        </button>
-      </form>
-    </div>
+          {error && (
+            <div
+              className={styles.loginError}
+              role="alert"
+              aria-live="assertive"
+            >
+              {error}
+            </div>
+          )}
+          {success && (
+            <div
+              className={styles.loginSuccess}
+              role="status"
+              aria-live="polite"
+            >
+              {success}
+            </div>
+          )}
+          <button
+            className={styles.loginButton}
+            type="submit"
+            disabled={loading}
+            aria-busy={loading}
+          >
+            {loading ? <span className={styles.spinner} aria-hidden="true"></span> : 'Ingresar'}
+          </button>
+        </form>
+      </section>
+    </main>
   );
 }

@@ -73,25 +73,30 @@ export default function DashboardCards({ rol = 'Publico' }) {
   const navigate = useNavigate();
 
   return (
-    <div className={styles.grid}>
-      {allSections
-        .filter(sec => sec.roles.includes(rol))
-        .map(sec => (
-          <div
-            key={sec.path}
-            className={styles.card}
-            onClick={() => navigate(sec.path)}
-          >
-            <span
-              className={styles.iconBox}
-              style={{ background: sec.color + '22', color: sec.color }}
+    <section aria-label="Panel de accesos rápidos">
+      <div className={styles.grid} role="list">
+        {allSections
+          .filter(sec => sec.roles.includes(rol))
+          .map(sec => (
+            <button
+              key={sec.path}
+              className={styles.card}
+              onClick={() => navigate(sec.path)}
+              role="listitem"
+              aria-label={sec.title + '. ' + sec.desc}
+              tabIndex={0}
             >
-              <span className={styles.icon}>{sec.icon}</span>
-            </span>
-            <span className={styles.title}>{sec.title}</span>
-            <span className={styles.desc}>{sec.desc}</span>
-          </div>
-        ))}
-    </div>
+              <span
+                className={styles.iconBox}
+                aria-hidden="true"
+              >
+                <span className={styles.icon}>{sec.icon}</span>
+              </span>
+              <span className={styles.title}>{sec.title}</span>
+              <span className={styles.desc}>{sec.desc}</span>
+            </button>
+          ))}
+      </div>
+    </section>
   );
 }

@@ -22,25 +22,34 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={styles.nav}>
+    <nav className={styles.nav} role="navigation" aria-label="Barra de navegación principal">
       <div className={styles.brand}>Palonegro Conectado</div>
-      <div className={styles.links}>
-        <a
-          href={user ? "/dashboard" : "/inicio"}
-          className={styles.active}
-          onClick={handleInicioClick}
-        >
-          Inicio
-        </a>
+      <ul className={styles.links} role="menubar">
+        <li role="none">
+          <a
+            href={user ? "/dashboard" : "/inicio"}
+            className={styles.active}
+            onClick={handleInicioClick}
+            role="menuitem"
+          >
+            Inicio
+          </a>
+        </li>
         {!user && (
-          <NavLink to="/login" className={({ isActive }) => isActive ? styles.active : ''}>
-            Acceder a tu cuenta
-          </NavLink>
+          <li role="none">
+            <NavLink to="/login" className={({ isActive }) => isActive ? styles.active : ''} role="menuitem">
+              Acceder a tu cuenta
+            </NavLink>
+          </li>
         )}
         {user && (
-          <button onClick={handleLogout} className={styles.logout}>Cerrar sesión</button>
+          <li role="none">
+            <button onClick={handleLogout} className={styles.logout} role="menuitem">
+              Cerrar sesión
+            </button>
+          </li>
         )}
-      </div>
+      </ul>
     </nav>
   );
 }

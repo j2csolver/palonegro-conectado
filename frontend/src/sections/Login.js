@@ -24,9 +24,8 @@ export default function Login() {
         return;
       }
       const data = await res.json();
-      setUser(data.user);
-      // Si usas token:
-      // localStorage.setItem('token', data.token);
+      setUser(data.user, data.token);
+      localStorage.setItem('token', data.token);
       navigate('/dashboard');
     } catch (err) {
       setError('Error de conexión');

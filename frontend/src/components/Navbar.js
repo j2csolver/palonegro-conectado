@@ -1,23 +1,41 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import styles from './Navbar.module.css';
 
 export default function Navbar() {
-  const { user, setUser } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    setUser(null);
-    // Si usas token, también haz: localStorage.removeItem('token');
+    logout();
+    navigate('/inicio');
+  };
+
+  const handleInicioClick = (e) => {
+    e.preventDefault();
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/inicio');
+    }
   };
 
   return (
     <nav className={styles.nav}>
       <div className={styles.brand}>Palonegro Conectado</div>
       <div className={styles.links}>
-        <NavLink to="/inicio" className={({ isActive }) => isActive ? styles.active : ''}>Inicio</NavLink>
+        <a
+          href={user ? "/dashboard" : "/inicio"}
+          className={styles.active}
+          onClick={handleInicioClick}
+        >
+          Inicio
+        </a>
         {!user && (
-          <NavLink to="/login" className={({ isActive }) => isActive ? styles.active : ''}>Acceder a tu cuenta</NavLink>
+          <NavLink to="/login" className={({ isActive }) => isActive ? styles.active : ''}>
+            Acceder a tu cuenta
+          </NavLink>
         )}
         {user && (
           <button onClick={handleLogout} className={styles.logout}>Cerrar sesión</button>

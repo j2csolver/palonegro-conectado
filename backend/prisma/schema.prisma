@@ -21,13 +21,12 @@ model User {
   rol        String
   noticias   Noticia[]                @relation("AutorNoticias")
   transacciones Transaccion[]         @relation("TesoreroTransacciones")
-  denuncias  Denuncia[]
-  sugerencias Sugerencia[]
   comentarios Comentario[]
   encuestasParticipadas EncuestaParticipacion[]
   eventos    Evento[]                 @relation("AutorEventos")
   informes   Informe[]                @relation("CreadorInformes")
   notificaciones Notificacion[]
+  quejas     Queja[]
 }
 
 model Noticia {
@@ -83,23 +82,6 @@ model Evento {
   autorId     Int
 }
 
-model Denuncia {
-  id        Int      @id @default(autoincrement())
-  contenido String
-  fecha     DateTime @default(now())
-  autor     User     @relation(fields: [autorId], references: [id])
-  autorId   Int
-  estado    String   // Ej: "pendiente", "resuelta"
-}
-
-model Sugerencia {
-  id        Int      @id @default(autoincrement())
-  contenido String
-  fecha     DateTime @default(now())
-  autor     User     @relation(fields: [autorId], references: [id])
-  autorId   Int
-}
-
 model Encuesta {
   id        Int      @id @default(autoincrement())
   titulo    String
@@ -140,4 +122,20 @@ model Notificacion {
   usuarioId Int?
   canal     String   // "correo", "whatsapp"
   leida     Boolean  @default(false)
+}
+
+model Regla {
+  id          Int      @id @default(autoincrement())
+  titulo      String
+  descripcion String
+  fecha       DateTime @default(now())
+}
+
+model Queja {
+  id          Int      @id @default(autoincrement())
+  titulo      String
+  descripcion String
+  fecha       DateTime @default(now())
+  usuario     User?    @relation(fields: [usuarioId], references: [id])
+  usuarioId   Int?
 }

@@ -10,6 +10,8 @@ import denunciaRoutes from './routes/denuncias.js';
 import sugerenciaRoutes from './routes/sugerencias.js';
 import encuestaRoutes from './routes/encuestas.js';
 import notificacionRoutes from './routes/notificaciones.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './swagger.js';
 
 const app = express();
 app.use(cors());
@@ -25,6 +27,7 @@ app.use('/api/denuncias', denunciaRoutes);
 app.use('/api/sugerencias', sugerenciaRoutes);
 app.use('/api/encuestas', encuestaRoutes);
 app.use('/api/notificaciones', notificacionRoutes);
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/', (req, res) => res.send('API Palonegro Conectado funcionando'));
 

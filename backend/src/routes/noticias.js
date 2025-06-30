@@ -4,13 +4,48 @@ import { verificarToken, requireRole } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Obtener noticias (público)
+/**
+ * @swagger
+ * /noticias:
+ *   get:
+ *     summary: Obtiene todas las noticias
+ *     tags: [Noticias]
+ *     responses:
+ *       200:
+ *         description: Lista de noticias
+ */
 router.get('/', async (req, res) => {
   const noticias = await prisma.noticia.findMany();
   res.json(noticias);
 });
 
-// Crear noticia (solo Administrador)
+/**
+ * @swagger
+ * /noticias:
+ *   post:
+ *     summary: Crea una noticia (solo Administrador)
+ *     tags: [Noticias]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               titulo:
+ *                 type: string
+ *               contenido:
+ *                 type: string
+ *               categoria:
+ *                 type: string
+ *               publicado:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Noticia creada
+ */
 router.post('/', verificarToken, requireRole('Administrador'), async (req, res) => {
   const { titulo, contenido, categoria, publicado } = req.body;
   const autorId = req.user.id;

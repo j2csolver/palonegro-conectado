@@ -1,0 +1,144 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int                      @id @default(autoincrement())
+  nombre     String
+  email      String                   @unique
+  password   String
+  rol        String
+  noticias   Noticia[]                @relation("AutorNoticias")
+  transacciones Transaccion[]         @relation("TesoreroTransacciones")
+  denuncias  Denuncia[]
+  sugerencias Sugerencia[]
+  comentarios Comentario[]
+  encuestasParticipadas EncuestaParticipacion[]
+  eventos    Evento[]                 @relation("AutorEventos")
+  informes   Informe[]                @relation("CreadorInformes")
+  notificaciones Notificacion[]
+}
+
+model Noticia {
+  id         Int        @id @default(autoincrement())
+  titulo     String
+  contenido  String
+  categoria  String
+  publicado  Boolean    @default(false)
+  fecha      DateTime   @default(now())
+  autor      User       @relation("AutorNoticias", fields: [autorId], references: [id])
+  autorId    Int
+  comentarios Comentario[]
+}
+
+model Comentario {
+  id        Int      @id @default(autoincrement())
+  contenido String
+  fecha     DateTime @default(now())
+  noticia   Noticia  @relation(fields: [noticiaId], references: [id])
+  noticiaId Int
+  autor     User     @relation(fields: [autorId], references: [id])
+  autorId   Int
+}
+
+model Transaccion {
+  id          Int      @id @default(autoincrement())
+  tipo        String   // 'ingreso' o 'egreso'
+  categoria   String
+  monto       Float
+  descripcion String
+  fecha       DateTime @default(now())
+  comprobante String?  // URL o ruta del archivo
+  tesorero    User     @relation("TesoreroTransacciones", fields: [tesoreroId], references: [id])
+  tesoreroId  Int
+}
+
+model Informe {
+  id        Int      @id @default(autoincrement())
+  periodo   String   // Ej: "2024-Q1"
+  url       String   // Ruta o URL del informe generado
+  fecha     DateTime @default(now())
+  creador   User     @relation("CreadorInformes", fields: [creadorId], references: [id])
+  creadorId Int
+}
+
+model Evento {
+  id          Int      @id @default(autoincrement())
+  titulo      String
+  descripcion String
+  fecha       DateTime
+  publicado   Boolean  @default(false)
+  autor       User     @relation("AutorEventos", fields: [autorId], references: [id])
+  autorId     Int
+}
+
+model Denuncia {
+  id        Int      @id @default(autoincrement())
+  contenido String
+  fecha     DateTime @default(now())
+  autor     User     @relation(fields: [autorId], references: [id])
+  autorId   Int
+  estado    String   // Ej: "pendiente", "resuelta"
+}
+
+model Sugerencia {
+  id        Int      @id @default(autoincrement())
+  contenido String
+  fecha     DateTime @default(now())
+  autor     User     @relation(fields: [autorId], references: [id])
+  autorId   Int
+}
+
+model Encuesta {
+  id        Int      @id @default(autoincrement())
+  titulo    String
+  activa    Boolean  @default(true)
+  preguntas Pregunta[]
+  participaciones EncuestaParticipacion[]
+}
+
+model Pregunta {
+  id         Int      @id @default(autoincrement())
+  texto      String
+  encuesta   Encuesta @relation(fields: [encuestaId], references: [id])
+  encuestaId Int
+  opciones   Opcion[]
+}
+
+model Opcion {
+  id         Int      @id @default(autoincrement())
+  texto      String
+  pregunta   Pregunta @relation(fields: [preguntaId], references: [id])
+  preguntaId Int
+}
+
+model EncuestaParticipacion {
+  id         Int      @id @default(autoincrement())
+  usuario    User     @relation(fields: [usuarioId], references: [id])
+  usuarioId  Int
+  encuesta   Encuesta @relation(fields: [encuestaId], references: [id])
+  encuestaId Int
+  fecha      DateTime @default(now())
+}
+
+model Notificacion {
+  id        Int      @id @default(autoincrement())
+  mensaje   String
+  fecha     DateTime @default(now())
+  usuario   User?    @relation(fields: [usuarioId], references: [id])
+  usuarioId Int?
+  canal     String   // "correo", "whatsapp"
+  leida     Boolean  @default(false)
+}

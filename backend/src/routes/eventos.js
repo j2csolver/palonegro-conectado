@@ -4,13 +4,60 @@ import { verificarToken, requireRole } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Obtener eventos (público)
+/**
+ * @swagger
+ * tags:
+ *   name: Eventos
+ *   description: Endpoints para gestión de eventos comunitarios
+ */
+
+/**
+ * @swagger
+ * /eventos:
+ *   get:
+ *     summary: Obtiene todos los eventos
+ *     tags: [Eventos]
+ *     responses:
+ *       200:
+ *         description: Lista de eventos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Evento'
+ */
 router.get('/', async (req, res) => {
   const eventos = await prisma.evento.findMany();
   res.json(eventos);
 });
 
-// Crear evento (solo Administrador)
+/**
+ * @swagger
+ * /eventos:
+ *   post:
+ *     summary: Crea un evento (solo Administrador)
+ *     tags: [Eventos]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/EventoInput'
+ *     responses:
+ *       200:
+ *         description: Evento creado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Evento'
+ *       401:
+ *         description: No autorizado
+ *       403:
+ *         description: Acceso denegado
+ */
 router.post('/', verificarToken, requireRole('Administrador'), async (req, res) => {
   const { titulo, descripcion, fecha, publicado } = req.body;
   const autorId = req.user.id;
@@ -20,14 +67,70 @@ router.post('/', verificarToken, requireRole('Administrador'), async (req, res) 
   res.json(evento);
 });
 
-// Obtener evento por id (público)
+/**
+ * @swagger
+ * /eventos/{id}:
+ *   get:
+ *     summary: Obtiene un evento por ID
+ *     tags: [Eventos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID del evento
+ *     responses:
+ *       200:
+ *         description: Evento encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Evento'
+ *       404:
+ *         description: Evento no encontrado
+ */
 router.get('/:id', async (req, res) => {
   const evento = await prisma.evento.findUnique({ where: { id: Number(req.params.id) } });
   if (!evento) return res.status(404).json({ error: 'Evento no encontrado' });
   res.json(evento);
 });
 
-// Editar evento (solo Administrador)
+/**
+ * @swagger
+ * /eventos/{id}:
+ *   put:
+ *     summary: Edita un evento (solo Administrador)
+ *     tags: [Eventos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID del evento
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/EventoInput'
+ *     responses:
+ *       200:
+ *         description: Evento actualizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Evento'
+ *       401:
+ *         description: No autorizado
+ *       403:
+ *         description: Acceso denegado
+ *       404:
+ *         description: Evento no encontrado
+ */
 router.put('/:id', verificarToken, requireRole('Administrador'), async (req, res) => {
   const { titulo, descripcion, fecha, publicado } = req.body;
   try {
@@ -41,7 +144,38 @@ router.put('/:id', verificarToken, requireRole('Administrador'), async (req, res
   }
 });
 
-// Eliminar evento (solo Administrador)
+/**
+ * @swagger
+ * /eventos/{id}:
+ *   delete:
+ *     summary: Elimina un evento (solo Administrador)
+ *     tags: [Eventos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID del evento
+ *     responses:
+ *       200:
+ *         description: Evento eliminado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *       401:
+ *         description: No autorizado
+ *       403:
+ *         description: Acceso denegado
+ *       404:
+ *         description: Evento no encontrado
+ */
 router.delete('/:id', verificarToken, requireRole('Administrador'), async (req, res) => {
   try {
     await prisma.evento.delete({ where: { id: Number(req.params.id) } });
@@ -50,5 +184,39 @@ router.delete('/:id', verificarToken, requireRole('Administrador'), async (req, 
     res.status(404).json({ error: 'Evento no encontrado' });
   }
 });
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Evento:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         titulo:
+ *           type: string
+ *         descripcion:
+ *           type: string
+ *         fecha:
+ *           type: string
+ *           format: date-time
+ *         publicado:
+ *           type: boolean
+ *         autorId:
+ *           type: integer
+ *     EventoInput:
+ *       type: object
+ *       properties:
+ *         titulo:
+ *           type: string
+ *         descripcion:
+ *           type: string
+ *         fecha:
+ *           type: string
+ *           format: date-time
+ *         publicado:
+ *           type: boolean
+ */
 
 export default router;

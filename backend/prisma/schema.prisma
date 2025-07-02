@@ -14,30 +14,30 @@ datasource db {
 }
 
 model User {
-  id         Int                      @id @default(autoincrement())
-  nombre     String
-  email      String                   @unique
-  password   String
-  rol        String
-  noticias   Noticia[]                @relation("AutorNoticias")
-  transacciones Transaccion[]         @relation("TesoreroTransacciones")
-  comentarios Comentario[]
+  id                    Int                     @id @default(autoincrement())
+  nombre                String
+  email                 String                  @unique
+  password              String
+  rol                   String
+  noticias              Noticia[]               @relation("AutorNoticias")
+  transacciones         Transaccion[]           @relation("TesoreroTransacciones")
+  comentarios           Comentario[]
   encuestasParticipadas EncuestaParticipacion[]
-  eventos    Evento[]                 @relation("AutorEventos")
-  informes   Informe[]                @relation("CreadorInformes")
-  notificaciones Notificacion[]
-  quejas     Queja[]
+  eventos               Evento[]                @relation("AutorEventos")
+  informes              Informe[]               @relation("CreadorInformes")
+  notificaciones        Notificacion[]
+  quejas                Queja[]
 }
 
 model Noticia {
-  id         Int        @id @default(autoincrement())
-  titulo     String
-  contenido  String
-  categoria  String
-  publicado  Boolean    @default(false)
-  fecha      DateTime   @default(now())
-  autor      User       @relation("AutorNoticias", fields: [autorId], references: [id])
-  autorId    Int
+  id          Int          @id @default(autoincrement())
+  titulo      String
+  contenido   String
+  categoria   String
+  publicado   Boolean      @default(false)
+  fecha       DateTime     @default(now())
+  autor       User         @relation("AutorNoticias", fields: [autorId], references: [id])
+  autorId     Int
   comentarios Comentario[]
 }
 
@@ -53,20 +53,20 @@ model Comentario {
 
 model Transaccion {
   id          Int      @id @default(autoincrement())
-  tipo        String   // 'ingreso' o 'egreso'
+  tipo        String // 'ingreso' o 'egreso'
   categoria   String
   monto       Float
   descripcion String
   fecha       DateTime @default(now())
-  comprobante String?  // URL o ruta del archivo
+  comprobante String? // URL o ruta del archivo
   tesorero    User     @relation("TesoreroTransacciones", fields: [tesoreroId], references: [id])
   tesoreroId  Int
 }
 
 model Informe {
   id        Int      @id @default(autoincrement())
-  periodo   String   // Ej: "2024-Q1"
-  url       String   // Ruta o URL del informe generado
+  periodo   String // Ej: "2024-Q1"
+  url       String // Ruta o URL del informe generado
   fecha     DateTime @default(now())
   creador   User     @relation("CreadorInformes", fields: [creadorId], references: [id])
   creadorId Int
@@ -76,42 +76,56 @@ model Evento {
   id          Int      @id @default(autoincrement())
   titulo      String
   descripcion String
-  fecha       DateTime
+  fechaInicio DateTime
+  fechaFin    DateTime
   publicado   Boolean  @default(false)
   autor       User     @relation("AutorEventos", fields: [autorId], references: [id])
   autorId     Int
 }
 
 model Encuesta {
-  id        Int      @id @default(autoincrement())
-  titulo    String
-  activa    Boolean  @default(true)
-  preguntas Pregunta[]
+  id              Int                     @id @default(autoincrement())
+  titulo          String
+  activa          Boolean                 @default(true)
+  preguntas       Pregunta[]
   participaciones EncuestaParticipacion[]
 }
 
 model Pregunta {
-  id         Int      @id @default(autoincrement())
+  id         Int         @id @default(autoincrement())
   texto      String
-  encuesta   Encuesta @relation(fields: [encuestaId], references: [id])
+  encuesta   Encuesta    @relation(fields: [encuestaId], references: [id])
   encuestaId Int
   opciones   Opcion[]
+  respuestas Respuesta[] // <-- relación inversa
 }
 
 model Opcion {
-  id         Int      @id @default(autoincrement())
+  id         Int         @id @default(autoincrement())
   texto      String
-  pregunta   Pregunta @relation(fields: [preguntaId], references: [id])
+  pregunta   Pregunta    @relation(fields: [preguntaId], references: [id])
   preguntaId Int
+  respuestas Respuesta[] // <-- relación inversa
 }
 
 model EncuestaParticipacion {
-  id         Int      @id @default(autoincrement())
-  usuario    User     @relation(fields: [usuarioId], references: [id])
+  id         Int         @id @default(autoincrement())
+  usuario    User        @relation(fields: [usuarioId], references: [id])
   usuarioId  Int
-  encuesta   Encuesta @relation(fields: [encuestaId], references: [id])
+  encuesta   Encuesta    @relation(fields: [encuestaId], references: [id])
   encuestaId Int
-  fecha      DateTime @default(now())
+  fecha      DateTime    @default(now())
+  respuestas Respuesta[]
+}
+
+model Respuesta {
+  id              Int                   @id @default(autoincrement())
+  participacion   EncuestaParticipacion @relation(fields: [participacionId], references: [id])
+  participacionId Int
+  pregunta        Pregunta              @relation(fields: [preguntaId], references: [id])
+  preguntaId      Int
+  opcion          Opcion                @relation(fields: [opcionId], references: [id])
+  opcionId        Int
 }
 
 model Notificacion {
@@ -120,7 +134,7 @@ model Notificacion {
   fecha     DateTime @default(now())
   usuario   User?    @relation(fields: [usuarioId], references: [id])
   usuarioId Int?
-  canal     String   // "correo", "whatsapp"
+  canal     String // "correo", "whatsapp"
   leida     Boolean  @default(false)
 }
 

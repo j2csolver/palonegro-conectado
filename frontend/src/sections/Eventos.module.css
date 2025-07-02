@@ -1,0 +1,52 @@
+.eventosGrid {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.calendarioBox {
+  min-width: 320px;
+  max-width: 400px;
+  flex: 1 1 320px;
+}
+
+.listaEventosBox {
+  flex: 2 1 320px;
+  min-width: 280px;
+}
+
+.eventosDiaTitulo {
+  margin-bottom: 1rem;
+  font-size: 1.15rem;
+  color: #0056b3;
+}
+
+.listaEventos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.eventoItem {
+  margin-bottom: 1.2rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(35, 41, 70, 0.06);
+}
+
+@media (max-width: 900px) {
+  .eventosGrid {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: stretch;
+  }
+  .calendarioBox,
+  .listaEventosBox {
+    max-width: 100%;
+    min-width: 0;
+  }
+}

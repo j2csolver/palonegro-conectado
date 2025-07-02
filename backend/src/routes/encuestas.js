@@ -27,12 +27,17 @@ const router = express.Router();
  *               items:
  *                 $ref: '#/components/schemas/Encuesta'
  */
-router.get('/', async (req, res) => {
-  const encuestas = await prisma.encuesta.findMany({
-    include: { preguntas: { include: { opciones: true } } }
-  });
-  res.json(encuestas);
-});
+router.get(
+  '/',
+  verificarToken,
+  requireRole('Residente', 'Administrador'),
+  async (req, res) => {
+    const encuestas = await prisma.encuesta.findMany({
+      include: { preguntas: { include: { opciones: true } } }
+    });
+    res.json(encuestas);
+  }
+);
 
 /**
  * @swagger
@@ -101,14 +106,19 @@ router.post('/', verificarToken, requireRole('Administrador'), async (req, res) 
  *       404:
  *         description: Encuesta no encontrada
  */
-router.get('/:id', async (req, res) => {
-  const encuesta = await prisma.encuesta.findUnique({
-    where: { id: Number(req.params.id) },
-    include: { preguntas: { include: { opciones: true } } }
-  });
-  if (!encuesta) return res.status(404).json({ error: 'Encuesta no encontrada' });
-  res.json(encuesta);
-});
+router.get(
+  '/:id',
+  verificarToken,
+  requireRole('Residente', 'Administrador'),
+  async (req, res) => {
+    const encuesta = await prisma.encuesta.findUnique({
+      where: { id: Number(req.params.id) },
+      include: { preguntas: { include: { opciones: true } } }
+    });
+    if (!encuesta) return res.status(404).json({ error: 'Encuesta no encontrada' });
+    res.json(encuesta);
+  }
+);
 
 /**
  * @swagger
@@ -125,6 +135,23 @@ router.get('/:id', async (req, res) => {
  *           type: integer
  *         required: true
  *         description: ID de la encuesta
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               respuestas:
+ *                 type: object
+ *                 additionalProperties:
+ *                   type: integer
+ *                 description:
+ *                   preguntaId: opcionId
+ *             example:
+ *               respuestas:
+ *                 "1": 10
+ *                 "2": 21
  *     responses:
  *       200:
  *         description: Participación registrada
@@ -140,10 +167,128 @@ router.get('/:id', async (req, res) => {
 router.post('/:id/responder', verificarToken, requireRole('Residente', 'Administrador'), async (req, res) => {
   const usuarioId = req.user.id;
   const encuestaId = Number(req.params.id);
+  const { respuestas } = req.body; // { [preguntaId]: opcionId }
+
+  // Crea la participación
   const participacion = await prisma.encuestaParticipacion.create({
-    data: { usuarioId, encuestaId }
+    data: {
+      usuarioId,
+      encuestaId,
+      respuestas: {
+        create: Object.entries(respuestas).map(([preguntaId, opcionId]) => ({
+          preguntaId: Number(preguntaId),
+          opcionId: Number(opcionId)
+        }))
+      }
+    },
+    include: { respuestas: true }
   });
+
   res.json(participacion);
+});
+
+/**
+ * @swagger
+ * /encuestas/{id}/resultados:
+ *   get:
+ *     summary: Obtiene los resultados de una encuesta agrupados por pregunta y opción
+ *     tags: [Encuestas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID de la encuesta
+ *     responses:
+ *       200:
+ *         description: Resultados de la encuesta
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               additionalProperties:
+ *                 type: object
+ *                 additionalProperties:
+ *                   type: integer
+ *             example:
+ *               "1":
+ *                 "10": 5
+ *                 "11": 2
+ *               "2":
+ *                 "20": 3
+ *                 "21": 4
+ *       404:
+ *         description: Encuesta no encontrada
+ *       500:
+ *         description: Error al obtener los resultados
+ */
+router.get(
+  '/:id/resultados',
+  verificarToken,
+  requireRole('Residente', 'Administrador'),
+  async (req, res) => {
+    const encuestaId = Number(req.params.id);
+    try {
+      // Trae todas las respuestas de participaciones de esa encuesta
+      const respuestas = await prisma.respuesta.findMany({
+        where: { participacion: { encuestaId } }
+      });
+
+      // Agrupa por pregunta y opción
+      const resultados = {};
+      respuestas.forEach(r => {
+        if (!resultados[r.preguntaId]) resultados[r.preguntaId] = {};
+        if (!resultados[r.preguntaId][r.opcionId]) resultados[r.preguntaId][r.opcionId] = 0;
+        resultados[r.preguntaId][r.opcionId]++;
+      });
+
+      res.json(resultados);
+    } catch (error) {
+      res.status(500).json({ error: 'No se pudieron obtener los resultados de la encuesta' });
+    }
+  }
+);
+
+/**
+ * @swagger
+ * /encuestas/{id}/participacion:
+ *   get:
+ *     summary: Verifica si el usuario autenticado ya participó en la encuesta
+ *     tags: [Encuestas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID de la encuesta
+ *     responses:
+ *       200:
+ *         description: Estado de participación
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 yaParticipo:
+ *                   type: boolean
+ *             example:
+ *               yaParticipo: true
+ *       401:
+ *         description: No autorizado
+ */
+router.get('/:id/participacion', verificarToken, requireRole('Residente', 'Administrador'), async (req, res) => {
+  const encuestaId = Number(req.params.id);
+  const usuarioId = req.user.id;
+  const participacion = await prisma.encuestaParticipacion.findFirst({
+    where: { encuestaId, usuarioId }
+  });
+  res.json({ yaParticipo: !!participacion });
 });
 
 /**

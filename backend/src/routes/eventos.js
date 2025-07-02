@@ -28,7 +28,9 @@ const router = express.Router();
  *                 $ref: '#/components/schemas/Evento'
  */
 router.get('/', async (req, res) => {
-  const eventos = await prisma.evento.findMany();
+  const eventos = await prisma.evento.findMany({
+    orderBy: { fechaInicio: 'asc' }
+  });
   res.json(eventos);
 });
 
@@ -47,7 +49,7 @@ router.get('/', async (req, res) => {
  *           schema:
  *             $ref: '#/components/schemas/EventoInput'
  *     responses:
- *       200:
+ *       201:
  *         description: Evento creado
  *         content:
  *           application/json:
@@ -59,12 +61,19 @@ router.get('/', async (req, res) => {
  *         description: Acceso denegado
  */
 router.post('/', verificarToken, requireRole('Administrador'), async (req, res) => {
-  const { titulo, descripcion, fecha, publicado } = req.body;
+  const { titulo, descripcion, fechaInicio, fechaFin, publicado } = req.body;
   const autorId = req.user.id;
   const evento = await prisma.evento.create({
-    data: { titulo, descripcion, fecha: new Date(fecha), publicado, autorId }
+    data: {
+      titulo,
+      descripcion,
+      fechaInicio: new Date(fechaInicio),
+      fechaFin: new Date(fechaFin),
+      publicado,
+      autorId
+    }
   });
-  res.json(evento);
+  res.status(201).json(evento);
 });
 
 /**
@@ -132,11 +141,17 @@ router.get('/:id', async (req, res) => {
  *         description: Evento no encontrado
  */
 router.put('/:id', verificarToken, requireRole('Administrador'), async (req, res) => {
-  const { titulo, descripcion, fecha, publicado } = req.body;
+  const { titulo, descripcion, fechaInicio, fechaFin, publicado } = req.body;
   try {
     const evento = await prisma.evento.update({
       where: { id: Number(req.params.id) },
-      data: { titulo, descripcion, fecha: new Date(fecha), publicado }
+      data: {
+        titulo,
+        descripcion,
+        fechaInicio: new Date(fechaInicio),
+        fechaFin: new Date(fechaFin),
+        publicado
+      }
     });
     res.json(evento);
   } catch {
@@ -198,7 +213,10 @@ router.delete('/:id', verificarToken, requireRole('Administrador'), async (req, 
  *           type: string
  *         descripcion:
  *           type: string
- *         fecha:
+ *         fechaInicio:
+ *           type: string
+ *           format: date-time
+ *         fechaFin:
  *           type: string
  *           format: date-time
  *         publicado:
@@ -212,7 +230,10 @@ router.delete('/:id', verificarToken, requireRole('Administrador'), async (req, 
  *           type: string
  *         descripcion:
  *           type: string
- *         fecha:
+ *         fechaInicio:
+ *           type: string
+ *           format: date-time
+ *         fechaFin:
  *           type: string
  *           format: date-time
  *         publicado:

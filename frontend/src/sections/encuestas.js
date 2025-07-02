@@ -70,51 +70,60 @@ export default function Encuestas() {
       const res = await fetch(`http://localhost:4000/api/encuestas/${encuestaId}/resultados`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (res.ok) setResultados(await res.json());
-      else setMensaje('No se pudieron cargar los resultados.');
+if (res.ok) {
+  const data = await res.json();
+  setState(prev => ({ ...prev, resultados: data }));
+        setState(prev => ({ ...prev, mensaje: 'No se pudieron cargar los resultados.' }));
+      }
     } catch {
-      setMensaje('Error de conexión al cargar resultados.');
-      setResultados(null);
+      setState(prev => ({ 
+        ...prev, 
+        mensaje: 'Error de conexión al cargar resultados.',
+        resultados: null 
+      }));
     }
   };
 
   const handleRespuesta = (preguntaId, opcionId) => {
-    setRespuestas(prev => ({ ...prev, [preguntaId]: opcionId }));
+    setState(prev => ({ ...prev, respuestas: { ...prev.respuestas, [preguntaId]: opcionId } }));
   };
-
   const handleVotar = async (e) => {
     e.preventDefault();
-    setMensaje('');
-    if (!seleccionada) return;
-    const preguntas = seleccionada.preguntas || [];
-    // Validación: todas las preguntas deben tener respuesta
-    const faltantes = preguntas.filter(p => !respuestas[p.id]);
+    setState(prev => ({ ...prev, mensaje: '' }));
+    if (!state.seleccionada) return;
+    const preguntas = state.seleccionada.preguntas || [];
+    
+    const faltantes = preguntas.filter(p => !state.respuestas[p.id]);
     if (faltantes.length > 0) {
-      setMensaje('Responde todas las preguntas para votar.');
+      setState(prev => ({ ...prev, mensaje: 'Responde todas las preguntas para votar.' }));
       return;
     }
     try {
-      const res = await fetch(`http://localhost:4000/api/encuestas/${seleccionada.id}/responder`, {
+      const res = await fetch(`http://localhost:4000/api/encuestas/${state.seleccionada.id}/responder`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ respuestas })
+        body: JSON.stringify({ respuestas: state.respuestas })
       });
       if (!res.ok) {
         if (res.status === 409) {
-          setMensaje('Ya has participado en esta encuesta.');
+          setState(prev => ({ ...prev, mensaje: 'Ya has participado en esta encuesta.' }));
         } else {
-          setMensaje('No se pudo registrar el voto');
+          setState(prev => ({ ...prev, mensaje: 'No se pudo registrar el voto' }));
         }
         return;
       }
-      setMensaje('¡Voto registrado correctamente!');
-      setYaParticipo(true);
-      await cargarResultados(seleccionada.id);
+      setState(prev => ({ 
+        ...prev, 
+        mensaje: '¡Voto registrado correctamente!',
+        yaParticipo: true
+      }));
+      
+      await cargarResultados(state.seleccionada.id);
     } catch {
-      setMensaje('No se pudo registrar el voto por un error de conexión');
+      setState(prev => ({ ...prev, mensaje: 'No se pudo registrar el voto por un error de conexión' }));
     }
   };
 
@@ -141,38 +150,43 @@ export default function Encuestas() {
 
   // Funciones para crear encuesta
   const handleAgregarOpcion = () => {
-    setOpciones([...opciones, '']);
+    setState(prev => ({ ...prev, opciones: [...prev.opciones, ''] }));
   };
 
   const handleOpcionChange = (idx, value) => {
-    setOpciones(opciones.map((op, i) => (i === idx ? value : op)));
+    setState(prev => ({ ...prev, opciones: prev.opciones.map((op, i) => (i === idx ? value : op)) }));
   };
 
   const handleAgregarPregunta = () => {
-    if (!preguntaTexto.trim() || opciones.some(op => !op.trim())) {
-      setCrearMensaje('Completa el texto de la pregunta y todas las opciones.');
+    if (!state.preguntaTexto.trim() || state.opciones.some(op => !op.trim())) {
+      setState(prev => ({ ...prev, crearMensaje: 'Completa el texto de la pregunta y todas las opciones.' }));
       return;
     }
-    setNuevasPreguntas([
-      ...nuevasPreguntas,
-      { texto: preguntaTexto, opciones: opciones.filter(op => op.trim()) }
-    ]);
-    setPreguntaTexto('');
-    setOpciones(['', '']);
-    setCrearMensaje('');
+    setState(prev => ({
+      ...prev,
+      nuevasPreguntas: [
+        ...prev.nuevasPreguntas,
+        { texto: prev.preguntaTexto, opciones: prev.opciones.filter(op => op.trim()) }
+      ],
+      preguntaTexto: '',
+      opciones: ['', ''],
+      crearMensaje: ''
+    }));
   };
 
   const handleEliminarPregunta = (idx) => {
-    setNuevasPreguntas(nuevasPreguntas.filter((_, i) => i !== idx));
+    setState(prev => ({ ...prev, nuevasPreguntas: prev.nuevasPreguntas.filter((_, i) => i !== idx) }));
   };
 
   const handleCrearEncuesta = async (e) => {
     e.preventDefault();
-    setCrearMensaje('');
-    if (!nuevoTitulo.trim() || nuevasPreguntas.length === 0) {
-      setCrearMensaje('Agrega un título y al menos una pregunta.');
+    setState(prev => ({ ...prev, crearMensaje: '' }));
+    
+    if (!state.nuevoTitulo.trim() || state.nuevasPreguntas.length === 0) {
+      setState(prev => ({ ...prev, crearMensaje: 'Agrega un título y al menos una pregunta.' }));
       return;
     }
+    
     try {
       const res = await fetch('http://localhost:4000/api/encuestas', {
         method: 'POST',
@@ -181,19 +195,24 @@ export default function Encuestas() {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          titulo: nuevoTitulo,
-          activa: nuevaActiva,
-          preguntas: nuevasPreguntas
+          titulo: state.nuevoTitulo,
+          activa: state.nuevaActiva,
+          preguntas: state.nuevasPreguntas
         })
       });
+      
       if (!res.ok) throw new Error('No se pudo crear la encuesta');
-      setCrearMensaje('¡Encuesta creada correctamente!');
-      setCreando(false);
-      setNuevoTitulo('');
-      setNuevaActiva(true);
-      setNuevasPreguntas([]);
+      
+      setState(prev => ({
+        ...prev,
+        crearMensaje: '¡Encuesta creada correctamente!',
+        creando: false,
+        nuevoTitulo: '',
+        nuevaActiva: true,
+        nuevasPreguntas: []
+      }));
     } catch {
-      setCrearMensaje('No se pudo crear la encuesta');
+      setState(prev => ({ ...prev, crearMensaje: 'No se pudo crear la encuesta' }));
     }
   };
 
@@ -201,9 +220,9 @@ export default function Encuestas() {
     <main>
       <section aria-label="Encuestas y votaciones comunitarias">
         <h2>Encuestas</h2>
-        {user?.rol === 'Administrador' && !creando && (
+        {user?.rol === 'Administrador' && !state.creando && (
           <button
-            onClick={() => setCreando(true)}
+            onClick={() => setState(prev => ({ ...prev, creando: true }))}
             style={{
               marginBottom: 16,
               background: '#1976d2',
@@ -219,7 +238,7 @@ export default function Encuestas() {
           </button>
         )}
 
-        {creando && (
+        {state.creando && (
           <form onSubmit={handleCrearEncuesta} style={{ marginBottom: 32, border: '1px solid #ccc', padding: 16, borderRadius: 8 }}>
             <h3>Crear nueva encuesta</h3>
             <label>
@@ -227,7 +246,7 @@ export default function Encuestas() {
               <input
                 type="text"
                 value={nuevoTitulo}
-                onChange={e => setNuevoTitulo(e.target.value)}
+                onChange={e => setState(prev => ({ ...prev, NuevoTitulo: e.target.value }))}
                 style={{ marginLeft: 8, width: '60%' }}
                 required
                 aria-required="true"
@@ -239,7 +258,7 @@ export default function Encuestas() {
               <input
                 type="checkbox"
                 checked={nuevaActiva}
-                onChange={e => setNuevaActiva(e.target.checked)}
+                onChange={e => setState(prev => ({ ...prev, NuevaActiva: e.target.checked }))}
                 style={{ marginLeft: 8 }}
                 aria-checked={nuevaActiva}
               />
@@ -251,7 +270,7 @@ export default function Encuestas() {
               <input
                 type="text"
                 value={preguntaTexto}
-                onChange={e => setPreguntaTexto(e.target.value)}
+                onChange={e => setState(prev => ({ ...prev, PreguntaTexto: e.target.value }))}
                 style={{ marginLeft: 8, width: '60%' }}
                 required
                 aria-required="true"
@@ -259,7 +278,7 @@ export default function Encuestas() {
             </label>
             <div>
               Opciones:
-              {opciones.map((op, idx) => (
+              {state.opciones.map((op, idx) => (
                 <input
                   key={idx}
                   type="text"
@@ -345,7 +364,7 @@ export default function Encuestas() {
             </button>
             <button
               type="button"
-              onClick={() => setCreando(false)}
+              onClick={() => setState(prev => ({ ...prev, creando: true }))}
               style={{
                 marginLeft: 8,
                 background: '#1976d2',
@@ -367,16 +386,16 @@ export default function Encuestas() {
           </form>
         )}
 
-        {!creando && (
+        {!state.creando && (
           <>
-            {loading && <p aria-live="polite">Cargando encuestas...</p>}
-            {error && <div style={{ color: 'red' }} role="alert" aria-live="assertive">{error}</div>}
-            {!loading && !error && encuestas.length === 0 && (
+            {state.loading && <p aria-live="polite">Cargando encuestas...</p>}
+            {state.error && <div style={{ color: 'red' }} role="alert" aria-live="assertive">{state.error}</div>}
+            {!state.loading && !state.error && state.encuestas.length === 0 && (
               <p>No hay encuestas disponibles en este momento.</p>
             )}
-            {!seleccionada && !loading && !error && encuestas.length > 0 && (
+            {!state.seleccionada && !state.loading && !state.error && state.encuestas.length > 0 && (
               <ul>
-                {encuestas.map(encuesta => (
+                {state.encuestas.map(encuesta => (
                   <li key={encuesta.id}>
                     <strong>{encuesta.titulo}</strong>
                     <button
@@ -399,12 +418,12 @@ export default function Encuestas() {
                 ))}
               </ul>
             )}
-            {seleccionada && (
+            {state.seleccionada && (
               <>
-                {user?.rol === 'Residente' && yaParticipo ? (
+                {(user?.rol === 'Residente' || user?.rol === 'Administrador') && state.yaParticipo ? (
                   <div>
-                    <h3 tabIndex={0}>{seleccionada.titulo}</h3>
-                    {seleccionada.preguntas?.map(pregunta => (
+                    <h3 tabIndex={0}>{state.seleccionada.titulo}</h3>
+                    {state.seleccionada.preguntas?.map(pregunta => (
                       <div key={pregunta.id} style={{ marginBottom: 24 }}>
                         <strong tabIndex={0}>{pregunta.texto}</strong>
                         {renderGrafico(pregunta)}
@@ -412,7 +431,7 @@ export default function Encuestas() {
                     ))}
                     <button
                       type="button"
-                      onClick={() => setSeleccionada(null)}
+                      onClick={() => setState(prev => ({ ...prev, seleccionada: null }))}
                       style={{
                         marginBottom: 16,
                         background: '#1976d2',
@@ -447,7 +466,7 @@ export default function Encuestas() {
                                   aria-checked={respuestas[pregunta.id] === op.id}
                                   aria-label={`Opción ${op.texto} para la pregunta ${pregunta.texto}`}
                                   required
-                                  disabled={yaParticipo}
+                                  disabled={state.yaParticipo}
                                 />
                                 {op.texto}
                               </label>
@@ -458,7 +477,7 @@ export default function Encuestas() {
                     ))}
                     <button
                       type="submit"
-                      disabled={yaParticipo}
+                      disabled={state.yaParticipo}
                       style={{
                         background: '#1976d2',
                         color: '#fff',
@@ -466,14 +485,14 @@ export default function Encuestas() {
                         borderRadius: 4,
                         padding: '8px 16px',
                         fontWeight: 'bold',
-                        cursor: yaParticipo ? 'not-allowed' : 'pointer'
+                        cursor: state.yaParticipo ? 'not-allowed' : 'pointer'
                       }}
                     >
                       Votar
                     </button>
                     <button
                       type="button"
-                      onClick={() => setSeleccionada(null)}
+                      onClick={() => setState(prev => ({ ...prev, seleccionada: null }))}
                       style={{
                         marginLeft: 8,
                         background: '#1976d2',

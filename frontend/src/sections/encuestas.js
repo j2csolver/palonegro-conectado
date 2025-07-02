@@ -390,9 +390,9 @@ export default function Encuestas() {
                         fontWeight: 'bold',
                         cursor: 'pointer'
                       }}
-                      aria-label={`Participar en la encuesta ${encuesta.titulo}`}
+                      aria-label={`${state.yaParticipo ? 'Ver resultados de' : 'Participar en'} la encuesta ${encuesta.titulo}`}
                     >
-                      Participar
+                      {state.yaParticipo ? 'Ver Resultados' : 'Participar'}
                     </button>
                   </li>
                 ))}

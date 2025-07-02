@@ -1,79 +1,65 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
+import EncuestasService from '../services/EncuestasService';
 import {
   Chart as ChartJS,
   ArcElement,
   Tooltip,
   Legend
 } from 'chart.js';
-
-ChartJS.register(ArcElement, Tooltip, Legend);
 import { Pie } from 'react-chartjs-2';
-
+ChartJS.register(ArcElement, Tooltip, Legend);
 export default function Encuestas() {
   const { token, user } = useAuth();
-  const [encuestas, setEncuestas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [seleccionada, setSeleccionada] = useState(null);
-  const [respuestas, setRespuestas] = useState({});
-  const [mensaje, setMensaje] = useState('');
-  const [yaParticipo, setYaParticipo] = useState(false);
-  const [resultados, setResultados] = useState(null);
-
-  // Estado para crear encuesta (solo Administrador)
-  const [creando, setCreando] = useState(false);
-  const [nuevoTitulo, setNuevoTitulo] = useState('');
-  const [nuevaActiva, setNuevaActiva] = useState(true);
-  const [nuevasPreguntas, setNuevasPreguntas] = useState([]);
-  const [preguntaTexto, setPreguntaTexto] = useState('');
-  const [opciones, setOpciones] = useState(['', '']);
-  const [crearMensaje, setCrearMensaje] = useState('');
-
-  // Cargar encuestas
-  useEffect(() => {
-    setLoading(true);
-    setError('');
-    console.log('Token usado para fetch:', token); // <-- Agrega este log
-    fetch('http://localhost:4000/api/encuestas', {
-      headers: {
-        'Authorization': `Bearer ${token}`
+  const [state, setState] = useState({
+    encuestas: [],
+    loading: true,
+    error: '',
+    seleccionada: null,
+    respuestas: {},
+    mensaje: '',
+    yaParticipo: false,
+    resultados: null,
+    creando: false,
+    nuevoTitulo: '',
+    nuevaActiva: true,
+    nuevasPreguntas: [],
+    preguntaTexto: '',
+    opciones: ['', ''],
+    crearMensaje: ''
+  });
+  const cargarEncuestas = useCallback(async () => {
+    try {
+      setState(prev => ({ ...prev, loading: true, error: '' }));
+      const data = await EncuestasService.getEncuestas(token);
+      setState(prev => ({ ...prev, encuestas: data }));
+    } catch (error) {
+      setState(prev => ({ ...prev, error: error.message }));
+    } finally {
+      setState(prev => ({ ...prev, loading: false }));
       }
-    })
-      .then(res => {
-        if (!res.ok) throw new Error('No se pudieron cargar las encuestas');
-        return res.json();
-      })
-      .then(data => setEncuestas(data))
-      .catch(() => setError('No se pudieron cargar las encuestas'))
-      .finally(() => setLoading(false));
-  }, [token, creando]);
-
-  // Al seleccionar una encuesta, verifica si ya participó y carga resultados si es necesario
+  }, [token]);
+  useEffect(() => {
+    cargarEncuestas();
+  }, [cargarEncuestas, state.creando]);
   const handleSeleccionar = async (encuesta) => {
-    setSeleccionada(encuesta);
-    setRespuestas({});
-    setMensaje('');
-    setResultados(null);
-    setYaParticipo(false);
-
-    // Verifica si ya participó (backend debe exponer este endpoint)
+    setState(prev => ({
+      ...prev,
+      seleccionada: encuesta,
+      respuestas: {},
+      mensaje: '',
+      resultados: null,
+      yaParticipo: false
+    }));
     if (user?.rol === 'Residente' || user?.rol === 'Administrador') {
       try {
-        const res = await fetch(`http://localhost:4000/api/encuestas/${encuesta.id}/participacion`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.yaParticipo) {
-            setYaParticipo(true);
+        const { yaParticipo } = await EncuestasService.verificarParticipacion(encuesta.id, token);
+        if (yaParticipo) {
+          setState(prev => ({ ...prev, yaParticipo: true }));
             await cargarResultados(encuesta.id);
           }
-        } else {
-          setMensaje('No se pudo verificar la participación.');
-        }
-      } catch {
-        setMensaje('Error de conexión al verificar participación.');
+      } catch (error) {
+        setState(prev => ({ ...prev, mensaje: error.message }));
       }
     }
   };

@@ -129,12 +129,12 @@ if (res.ok) {
 
   // Renderiza gráfico de resultados para una pregunta
   const renderGrafico = (pregunta) => {
-    if (!resultados || !resultados[pregunta.id]) return <p>No hay resultados.</p>;
+    if (!state.resultados || !state.resultados[pregunta.id]) return <p>No hay resultados.</p>;
     const data = {
       labels: pregunta.opciones.map(op => op.texto),
       datasets: [
         {
-          data: pregunta.opciones.map(op => resultados[pregunta.id][op.id] || 0),
+          data: pregunta.opciones.map(op => state.resultados[pregunta.id][op.id] || 0),
           backgroundColor: [
             '#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
           ],
@@ -245,8 +245,8 @@ if (res.ok) {
               Título:
               <input
                 type="text"
-                value={nuevoTitulo}
-                onChange={e => setState(prev => ({ ...prev, NuevoTitulo: e.target.value }))}
+                value={state.nuevoTitulo}
+                onChange={e => setState(prev => ({ ...prev, nuevoTitulo: e.target.value }))}
                 style={{ marginLeft: 8, width: '60%' }}
                 required
                 aria-required="true"
@@ -257,10 +257,10 @@ if (res.ok) {
               Activa:
               <input
                 type="checkbox"
-                checked={nuevaActiva}
-                onChange={e => setState(prev => ({ ...prev, NuevaActiva: e.target.checked }))}
+                checked={state.nuevaActiva}
+                onChange={e => setState(prev => ({ ...prev, nuevaActiva: e.target.checked }))}
                 style={{ marginLeft: 8 }}
-                aria-checked={nuevaActiva}
+                aria-checked={state.nuevaActiva}
               />
             </label>
             <hr />
@@ -269,8 +269,8 @@ if (res.ok) {
               Pregunta:
               <input
                 type="text"
-                value={preguntaTexto}
-                onChange={e => setState(prev => ({ ...prev, PreguntaTexto: e.target.value }))}
+                value={state.preguntaTexto}
+                onChange={e => setState(prev => ({ ...prev, preguntaTexto: e.target.value }))}
                 style={{ marginLeft: 8, width: '60%' }}
                 required
                 aria-required="true"
@@ -325,7 +325,7 @@ if (res.ok) {
               Agregar pregunta
             </button>
             <ul>
-              {nuevasPreguntas.map((p, idx) => (
+              {state.nuevasPreguntas.map((p, idx) => (
                 <li key={idx}>
                   <strong>{p.texto}</strong> ({p.opciones.join(', ')})
                   <button
@@ -364,7 +364,7 @@ if (res.ok) {
             </button>
             <button
               type="button"
-              onClick={() => setState(prev => ({ ...prev, creando: true }))}
+              onClick={() => setState(prev => ({ ...prev, creando: false }))}
               style={{
                 marginLeft: 8,
                 background: '#1976d2',
@@ -378,9 +378,9 @@ if (res.ok) {
             >
               Cancelar
             </button>
-            {crearMensaje && (
-              <div style={{ marginTop: 8, color: crearMensaje.startsWith('¡') ? 'green' : 'red' }} role="alert" aria-live="polite">
-                {crearMensaje}
+            {state.crearMensaje && (
+              <div style={{ marginTop: 8, color: state.crearMensaje.startsWith('¡') ? 'green' : 'red' }} role="alert" aria-live="polite">
+                {state.crearMensaje}
               </div>
             )}
           </form>
@@ -448,9 +448,9 @@ if (res.ok) {
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleVotar} aria-label={`Encuesta: ${seleccionada.titulo}`}>
-                    <h3 tabIndex={0}>{seleccionada.titulo}</h3>
-                    {seleccionada.preguntas?.map(pregunta => (
+                  <form onSubmit={handleVotar} aria-label={`Encuesta: ${state.seleccionada.titulo}`}>
+                    <h3 tabIndex={0}>{state.seleccionada.titulo}</h3>
+                    {state.seleccionada.preguntas?.map(pregunta => (
                       <div key={pregunta.id} style={{ marginBottom: 16 }}>
                         <strong tabIndex={0}>{pregunta.texto}</strong>
                         <ul>
@@ -461,9 +461,9 @@ if (res.ok) {
                                   type="radio"
                                   name={`pregunta-${pregunta.id}`}
                                   value={op.id}
-                                  checked={respuestas[pregunta.id] === op.id}
+                                  checked={state.respuestas[pregunta.id] === op.id}
                                   onChange={() => handleRespuesta(pregunta.id, op.id)}
-                                  aria-checked={respuestas[pregunta.id] === op.id}
+                                  aria-checked={state.respuestas[pregunta.id] === op.id}
                                   aria-label={`Opción ${op.texto} para la pregunta ${pregunta.texto}`}
                                   required
                                   disabled={state.yaParticipo}
@@ -507,13 +507,13 @@ if (res.ok) {
                     >
                       Volver
                     </button>
-                    {mensaje && (
+                    {state.mensaje && (
                       <div
-                        style={{ marginTop: 8, color: mensaje.startsWith('¡') ? 'green' : 'red' }}
-                        role={mensaje.startsWith('¡') ? 'status' : 'alert'}
+                        style={{ marginTop: 8, color: state.mensaje.startsWith('¡') ? 'green' : 'red' }}
+                        role={state.mensaje.startsWith('¡') ? 'status' : 'alert'}
                         aria-live="polite"
                       >
-                        {mensaje}
+                        {state.mensaje}
                       </div>
                     )}
                   </form>

@@ -46,5 +46,20 @@ class EncuestasService {
       throw new Error('Error al enviar respuestas: ' + error.message);
     }
   }
+async cargarResultados(encuestaId, token) {
+    try {
+      const response = await fetch(`${this.baseUrl}/${encuestaId}/resultados`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error('No se pudieron cargar los resultados');
+      }
+      return await response.json();
+    } catch (error) {
+      throw new Error('Error al cargar resultados: ' + error.message);
+    }
+  }
 }
 export default new EncuestasService();

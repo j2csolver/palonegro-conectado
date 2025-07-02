@@ -67,18 +67,12 @@ export default function Encuestas() {
   // Cargar resultados de la encuesta seleccionada
   const cargarResultados = async (encuestaId) => {
     try {
-      const res = await fetch(`http://localhost:4000/api/encuestas/${encuestaId}/resultados`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-if (res.ok) {
-  const data = await res.json();
+      const data = await EncuestasService.cargarResultados(encuestaId, token);
   setState(prev => ({ ...prev, resultados: data }));
-        setState(prev => ({ ...prev, mensaje: 'No se pudieron cargar los resultados.' }));
-      }
-    } catch {
+    } catch (error) {
       setState(prev => ({ 
         ...prev, 
-        mensaje: 'Error de conexión al cargar resultados.',
+        mensaje: 'Error al cargar resultados',
         resultados: null 
       }));
     }
@@ -91,30 +85,16 @@ if (res.ok) {
     e.preventDefault();
     setState(prev => ({ ...prev, mensaje: '' }));
     if (!state.seleccionada) return;
-    const preguntas = state.seleccionada.preguntas || [];
     
+    const preguntas = state.seleccionada.preguntas || [];
     const faltantes = preguntas.filter(p => !state.respuestas[p.id]);
+    
     if (faltantes.length > 0) {
       setState(prev => ({ ...prev, mensaje: 'Responde todas las preguntas para votar.' }));
       return;
     }
     try {
-      const res = await fetch(`http://localhost:4000/api/encuestas/${state.seleccionada.id}/responder`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ respuestas: state.respuestas })
-      });
-      if (!res.ok) {
-        if (res.status === 409) {
-          setState(prev => ({ ...prev, mensaje: 'Ya has participado en esta encuesta.' }));
-        } else {
-          setState(prev => ({ ...prev, mensaje: 'No se pudo registrar el voto' }));
-        }
-        return;
-      }
+      await EncuestasService.enviarRespuestas(state.seleccionada.id, state.respuestas, token);
       setState(prev => ({ 
         ...prev, 
         mensaje: '¡Voto registrado correctamente!',
@@ -122,8 +102,8 @@ if (res.ok) {
       }));
       
       await cargarResultados(state.seleccionada.id);
-    } catch {
-      setState(prev => ({ ...prev, mensaje: 'No se pudo registrar el voto por un error de conexión' }));
+    } catch (error) {
+      setState(prev => ({ ...prev, mensaje: error.message }));
     }
   };
 

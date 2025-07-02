@@ -1,39 +1,48 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import NoticiasService from '../services/NoticiasService';
 
 export default function Noticias() {
-  const [noticias, setNoticias] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [state, setState] = useState({
+    noticias: [],
+    loading: true,
+    error: ''
+  });
 
-  useEffect(() => {
-    fetch('http://localhost:4000/api/noticias')
-      .then(res => {
-        if (!res.ok) throw new Error('No se pudieron cargar las noticias');
-        return res.json();
-      })
-      .then(data => setNoticias(data))
-      .catch(() => setError('No se pudieron cargar las noticias'))
-      .finally(() => setLoading(false));
+  const cargarNoticias = useCallback(async () => {
+    try {
+      setState(prev => ({ ...prev, loading: true, error: ''}));
+      const data = await NoticiasService.getNoticias();
+      setState(prev => ({ ...prev, noticias: data}));
+    } catch (error) {
+      setState(prev => ({ ...prev, error: error.message}));
+    } finally {
+      setState(prev => ({ ...prev, loading: false}));
+    }
   }, []);
+  useEffect(() => {
+    cargarNoticias();
+  }, [cargarNoticias]);
 
   return (
     <main>
       <section aria-label="Noticias de la comunidad">
         <h2>Noticias</h2>
-        {loading && <p>Cargando noticias...</p>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {!loading && !error && noticias.length === 0 && (
+        {state.loading && <p aria-live="polite">Cargando noticias...</p>}
+        {state.error && <div style={{ color: 'red' }} role="alert" aria-live='assertive'>{state.error}</div>}
+        {!state.loading && !state.error && state.noticias.length === 0 && (
           <p>No hay noticias disponibles en este momento.</p>
         )}
-        <ul>
-          {noticias.map(noticia => (
-            <li key={noticia._id}>
-              <h3>{noticia.titulo}</h3>
-              <p>{noticia.contenido}</p>
-              <small>{new Date(noticia.fecha).toLocaleDateString()}</small>
-            </li>
-          ))}
-        </ul>
+        {!state.loading && !state.error && state.noticias.length > 0 && (
+          <ul>
+            {state.noticias.map(noticia => (
+              <li key={noticia._id}>
+                <h3>{noticia.titulo}</h3>
+                <p>{noticia.contenido}</p>
+                <small>{new Date(noticia.fecha).toLocaleDateString()}</small>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </main>
   );

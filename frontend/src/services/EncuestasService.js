@@ -46,7 +46,7 @@ class EncuestasService {
       throw new Error('Error al enviar respuestas: ' + error.message);
     }
   }
-async cargarResultados(encuestaId, token) {
+  async cargarResultados(encuestaId, token) {
     try {
       const response = await fetch(`${this.baseUrl}/${encuestaId}/resultados`, {
         headers: {

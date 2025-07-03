@@ -38,6 +38,112 @@
   box-shadow: 0 2px 8px rgba(35, 41, 70, 0.06);
 }
 
+.eventosCard {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.eventosForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.eventosForm label {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.eventosInput,
+.eventosForm input[type="text"],
+.eventosForm input[type="datetime-local"],
+.eventosForm textarea {
+  font-size: 1rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #cfd8dc;
+  border-radius: 6px;
+  background: #f9fafb;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.eventosInput:focus,
+.eventosForm input[type="text"]:focus,
+.eventosForm input[type="datetime-local"]:focus,
+.eventosForm textarea:focus {
+  border-color: #1976d2;
+  outline: none;
+  background: #fff;
+}
+
+.eventosForm .ql-container {
+  min-height: 120px;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f9fafb;
+}
+
+.eventosForm .ql-toolbar {
+  border-radius: 6px 6px 0 0;
+}
+
+.eventosBtn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.4rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.eventosBtn:hover,
+.eventosBtn:focus {
+  background: #125ea2;
+}
+
+.eventosBtnSmall {
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  font-size: 0.95rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.eventosBtnSmall:hover,
+.eventosBtnSmall:focus {
+  background: #bdbdbd;
+}
+
+.eventosMensajeError {
+  color: #d32f2f;
+  background: #fff0f0;
+  border: 1px solid #ffcdd2;
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
 @media (max-width: 900px) {
   .eventosGrid {
     flex-direction: column;

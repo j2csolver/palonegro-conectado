@@ -5,13 +5,13 @@ import styles from './Noticias.module.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-// Configuración personalizada para la toolbar y los formatos permitidos, sin emoji, imagen ni video
+// Configuración personalizada para la toolbar y los formatos permitidos, ahora con imagen y video
 const quillModules = {
   toolbar: [
     [{ 'header': [1, 2, false] }],
     ['bold', 'italic', 'underline', 'strike'],
     [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-    ['link', 'blockquote', 'code-block'],
+    ['link', 'image', 'video', 'blockquote', 'code-block'],
     [{ 'color': [] }, { 'background': [] }],
     ['clean']
   ]
@@ -19,7 +19,7 @@ const quillModules = {
 
 const quillFormats = [
   'header', 'bold', 'italic', 'underline', 'strike',
-  'list', 'bullet', 'link', 'blockquote', 'code-block',
+  'list', 'bullet', 'link', 'image', 'video', 'blockquote', 'code-block',
   'color', 'background'
 ];
 

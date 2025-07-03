@@ -293,6 +293,105 @@ router.get('/:id/participacion', verificarToken, requireRole('Residente', 'Admin
 
 /**
  * @swagger
+ * /encuestas/{id}:
+ *   put:
+ *     summary: Activa o desactiva una encuesta (solo Administrador)
+ *     tags: [Encuestas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID de la encuesta
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               activa:
+ *                 type: boolean
+ *             example:
+ *               activa: false
+ *     responses:
+ *       200:
+ *         description: Encuesta actualizada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Encuesta'
+ *       401:
+ *         description: No autorizado
+ *       403:
+ *         description: Acceso denegado
+ *       500:
+ *         description: No se pudo actualizar la encuesta
+ */
+router.put('/:id', verificarToken, requireRole('Administrador'), async (req, res) => {
+  const { id } = req.params;
+  const { activa } = req.body;
+  try {
+    const encuesta = await prisma.encuesta.update({
+      where: { id: Number(id) },
+      data: { activa }
+    });
+    res.json(encuesta);
+  } catch (error) {
+    res.status(500).json({ error: 'No se pudo actualizar la encuesta' });
+  }
+});
+
+/**
+ * @swagger
+ * /encuestas/{id}:
+ *   delete:
+ *     summary: Elimina una encuesta por ID (solo Administrador)
+ *     tags: [Encuestas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID de la encuesta
+ *     responses:
+ *       200:
+ *         description: Encuesta eliminada correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Encuesta eliminada correctamente
+ *       401:
+ *         description: No autorizado
+ *       403:
+ *         description: Acceso denegado
+ *       500:
+ *         description: No se pudo eliminar la encuesta
+ */
+router.delete('/:id', verificarToken, requireRole('Administrador'), async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.encuesta.delete({
+      where: { id: Number(id) }
+    });
+    res.json({ message: 'Encuesta eliminada correctamente' });
+  } catch (error) {
+    res.status(500).json({ error: 'No se pudo eliminar la encuesta' });
+  }
+});
+
+/**
+ * @swagger
  * components:
  *   schemas:
  *     Encuesta:

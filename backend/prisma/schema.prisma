@@ -94,38 +94,34 @@ model Encuesta {
 model Pregunta {
   id         Int         @id @default(autoincrement())
   texto      String
-  encuesta   Encuesta    @relation(fields: [encuestaId], references: [id])
+  encuesta   Encuesta    @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
   encuestaId Int
   opciones   Opcion[]
-  respuestas Respuesta[] // <-- relación inversa
 }
 
 model Opcion {
   id         Int         @id @default(autoincrement())
   texto      String
-  pregunta   Pregunta    @relation(fields: [preguntaId], references: [id])
+  pregunta   Pregunta    @relation(fields: [preguntaId], references: [id], onDelete: Cascade)
   preguntaId Int
-  respuestas Respuesta[] // <-- relación inversa
 }
 
 model EncuestaParticipacion {
   id         Int         @id @default(autoincrement())
   usuario    User        @relation(fields: [usuarioId], references: [id])
   usuarioId  Int
-  encuesta   Encuesta    @relation(fields: [encuestaId], references: [id])
+  encuesta   Encuesta    @relation(fields: [encuestaId], references: [id], onDelete: Cascade)
   encuestaId Int
   fecha      DateTime    @default(now())
   respuestas Respuesta[]
 }
 
 model Respuesta {
-  id              Int                   @id @default(autoincrement())
-  participacion   EncuestaParticipacion @relation(fields: [participacionId], references: [id])
+  id             Int                   @id @default(autoincrement())
+  preguntaId     Int
+  opcionId       Int
+  participacion  EncuestaParticipacion @relation(fields: [participacionId], references: [id], onDelete: Cascade)
   participacionId Int
-  pregunta        Pregunta              @relation(fields: [preguntaId], references: [id])
-  preguntaId      Int
-  opcion          Opcion                @relation(fields: [opcionId], references: [id])
-  opcionId        Int
 }
 
 model Notificacion {

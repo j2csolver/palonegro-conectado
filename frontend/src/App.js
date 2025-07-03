@@ -6,7 +6,6 @@ import Eventos from './sections/Eventos';
 import Reglas from './sections/Reglas';
 import Quejas from './sections/Quejas';
 import Tesoreria from './sections/Tesoreria';
-import Historial from './sections/Historial';
 import ResumenFinanciero from './sections/ResumenFinanciero';
 import Encuestas from './sections/Encuestas';
 import Inicio from './sections/Inicio';
@@ -57,14 +56,6 @@ function AppContent() {
             element={
               <PrivateRoute roles={['Tesorero']}>
                 <Tesoreria />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/historial"
-            element={
-              <PrivateRoute roles={['Tesorero']}>
-                <Historial />
               </PrivateRoute>
             }
           />

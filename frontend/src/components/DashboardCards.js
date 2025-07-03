@@ -52,14 +52,6 @@ const allSections = [
     roles: ['Tesorero']
   },
   {
-    title: 'Historial',
-    path: '/historial',
-    color: '#28a745',
-    icon: '📊',
-    desc: 'Historial detallado de movimientos financieros.',
-    roles: ['Tesorero']
-  },
-  {
     title: 'Resumen Financiero',
     path: '/resumen',
     color: '#28a745',

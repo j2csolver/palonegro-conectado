@@ -147,11 +147,15 @@ router.get('/:id', async (req, res) => {
  *         description: Transacción no encontrada
  */
 router.put('/:id', async (req, res) => {
-  const { tipo, categoria, monto, descripcion, comprobante } = req.body;
+  const { tipo, categoria, monto, descripcion, comprobante, fecha } = req.body;
   try {
+    const data = { tipo, categoria, monto, descripcion, comprobante };
+    // Si recibes 'YYYY-MM-DD', conviértelo a Date a medianoche local para evitar desfase
+    if (fecha) data.fecha = new Date(`${fecha}T00:00:00`);
+
     const transaccion = await prisma.transaccion.update({
       where: { id: Number(req.params.id) },
-      data: { tipo, categoria, monto, descripcion, comprobante }
+      data
     });
     res.json(transaccion);
   } catch {

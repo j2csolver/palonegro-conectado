@@ -53,12 +53,12 @@ model Comentario {
 
 model Transaccion {
   id          Int      @id @default(autoincrement())
-  tipo        String // 'ingreso' o 'egreso'
+  tipo        String   // 'ingreso' o 'egreso'
   categoria   String
   monto       Float
-  descripcion String
+  descripcion String   @db.Text
   fecha       DateTime @default(now())
-  comprobante String? // URL o ruta del archivo
+  comprobante String?  @db.Text
   tesorero    User     @relation("TesoreroTransacciones", fields: [tesoreroId], references: [id])
   tesoreroId  Int
 }

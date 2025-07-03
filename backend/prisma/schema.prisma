@@ -75,7 +75,7 @@ model Informe {
 model Evento {
   id          Int      @id @default(autoincrement())
   titulo      String
-  descripcion String
+  descripcion String   @db.Text
   fechaInicio DateTime
   fechaFin    DateTime
   publicado   Boolean  @default(false)
@@ -137,15 +137,15 @@ model Notificacion {
 model Regla {
   id          Int      @id @default(autoincrement())
   titulo      String
-  descripcion String
+  descripcion String   @db.Text
   fecha       DateTime @default(now())
 }
 
 model Queja {
   id          Int      @id @default(autoincrement())
   titulo      String
-  descripcion String
+  descripcion String   @db.Text
   fecha       DateTime @default(now())
-  usuario     User?    @relation(fields: [usuarioId], references: [id])
-  usuarioId   Int?
+  usuario     User     @relation(fields: [usuarioId], references: [id])
+  usuarioId   Int
 }

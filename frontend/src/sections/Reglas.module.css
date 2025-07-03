@@ -1,0 +1,126 @@
+.reglasLista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.reglaItem {
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(35, 41, 70, 0.06);
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.reglaTitulo {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  color: #1976d2;
+}
+
+.reglaDescripcion {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.reglaFecha {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.reglasCard {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.reglasForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.reglasInput,
+.reglasForm input[type="text"],
+.reglasForm input[type="date"],
+.reglasForm textarea {
+  font-size: 1rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #cfd8dc;
+  border-radius: 6px;
+  background: #f9fafb;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.reglasInput:focus,
+.reglasForm input[type="text"]:focus,
+.reglasForm input[type="date"]:focus,
+.reglasForm textarea:focus {
+  border-color: #1976d2;
+  outline: none;
+  background: #fff;
+}
+
+.reglasForm .ql-container {
+  min-height: 120px;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f9fafb;
+}
+
+.reglasForm .ql-toolbar {
+  border-radius: 6px 6px 0 0;
+}
+
+.reglasBtn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.4rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reglasBtn:hover,
+.reglasBtn:focus {
+  background: #125ea2;
+}
+
+.reglasBtnSmall {
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  font-size: 0.95rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reglasBtnSmall:hover,
+.reglasBtnSmall:focus {
+  background: #bdbdbd;
+}
+
+.reglasMensajeError {
+  color: #d32f2f;
+  background: #fff0f0;
+  border: 1px solid #ffcdd2;
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}

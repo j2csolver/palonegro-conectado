@@ -1,5 +1,6 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import { verificarToken } from '../middleware/auth.js'; // Asegúrate de importar tu middleware
 const router = express.Router();
 const prisma = new PrismaClient();
 
@@ -60,14 +61,15 @@ router.get('/', async (req, res) => {
  *       500:
  *         description: Error al crear la queja
  */
-router.post('/', async (req, res) => {
+router.post('/', verificarToken, async (req, res) => {
   try {
-    const { titulo, descripcion, usuarioId } = req.body;
+    const { titulo, descripcion } = req.body;
+    const usuarioId = req.user.id; // Toma el usuario autenticado del token
     const nuevaQueja = await prisma.queja.create({
       data: {
         titulo,
         descripcion,
-        usuarioId: usuarioId || null
+        usuarioId
       }
     });
     res.status(201).json(nuevaQueja);

@@ -32,7 +32,7 @@ model User {
 model Noticia {
   id          Int          @id @default(autoincrement())
   titulo      String
-  contenido   String
+  contenido   String   @db.Text
   categoria   String
   publicado   Boolean      @default(false)
   fecha       DateTime     @default(now())

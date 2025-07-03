@@ -1,0 +1,89 @@
+a {
+  color: #0645ad;              /* Azul clásico */
+  text-decoration: underline;  /* Subrayado */
+}
+
+a:visited {
+  color: #551a8b;              /* Morado para enlaces visitados */
+}
+
+a:hover {
+  color: #0b0080;
+  text-decoration: underline;
+}
+
+a:active {
+  color: red;
+}
+
+.noticiasBtn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.noticiasForm {
+  margin-bottom: 32px;
+  border: 1px solid #ccc;
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 600px;
+}
+
+.noticiasFormFields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.noticiasLabel {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.noticiasInput,
+.noticiasTextarea {
+  margin-top: 4px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+  /* Nueva separación a la derecha */
+  margin-right: 8px;
+}
+
+.noticiasTextarea {
+  min-height: 180px; /* Aumenta la altura mínima */
+  resize: vertical;
+  margin-top: 4px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+  margin-right: 8px;
+}
+
+.noticiasBtnRed {
+  background: #d32f2f;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.noticiasBtnSmall {
+  padding: 4px 12px;
+  margin-right: 8px;
+}

@@ -18,6 +18,7 @@ import AdminDashboard from './dashboards/AdminDashboard';
 import TesoreroDashboard from './dashboards/TesoreroDashboard';
 import ResidenteDashboard from './dashboards/ResidenteDashboard';
 import PrivateRoute from './routes/PrivateRoute';
+import AcercaDe from './sections/AcercaDe';
 
 function AppContent() {
   const { user } = useAuth();
@@ -34,6 +35,7 @@ function AppContent() {
           <Route path="/reglas" element={<Reglas />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cambiar-password" element={<CambiarPassword />} />
+          <Route path="/acerca-de" element={<AcercaDe />} />
 
           {/* Rutas privadas por rol */}
           <Route

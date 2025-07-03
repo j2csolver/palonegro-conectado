@@ -35,6 +35,15 @@ export default function Navbar() {
             Inicio
           </a>
         </li>
+        <li role="none">
+          <NavLink
+            to="/acerca-de"
+            className={({ isActive }) => isActive ? styles.active : ''}
+            role="menuitem"
+          >
+            Acerca de
+          </NavLink>
+        </li>
         {!user && (
           <li role="none">
             <NavLink to="/login" className={({ isActive }) => isActive ? styles.active : ''} role="menuitem">

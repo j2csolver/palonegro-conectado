@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import styles from './Login.module.css';
+import API_BASE_URL from '../config';
 
 export default function Login() {
   const { setUser } = useAuth();

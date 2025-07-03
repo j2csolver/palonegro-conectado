@@ -12,6 +12,10 @@ const swaggerDefinition = {
       url: 'http://localhost:4000/api',
       description: 'Servidor local',
     },
+    {
+      url: 'https://palonegro-conectado-production.up.railway.app/api',
+      description: 'Servidor Producción',
+    }
   ],
   components: {
     securitySchemes: {

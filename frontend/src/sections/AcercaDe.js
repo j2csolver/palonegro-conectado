@@ -23,7 +23,7 @@ export default function AcercaDe() {
           <strong>Palonegro Conectado</strong> es una plataforma desarrollada para la gestión y comunicación de la comunidad Palonegro.
         </p>
         <p style={{ margin: '1rem 0', fontStyle: 'italic', color: '#444' }}>
-          Este trabajo fue elaborado como parte del curso Prestación del Servicio Social Unadista. Universidad Nacional Abierta y a Distancia (UNAD).
+          Este trabajo fue elaborado como parte del requisito de grado Prestación del Servicio Social Unadista. Universidad Nacional Abierta y a Distancia (UNAD).
         </p>
         <h3>Créditos</h3>
         <ul>

@@ -59,6 +59,14 @@ const allSections = [
     desc: 'Resumen de ingresos y gastos por categorías.',
     roles: ['Tesorero', 'Residente']
   },
+  {
+    title: 'Usuarios',
+    path: '/usuarios',
+    color: '#6c63ff',
+    icon: '👤',
+    desc: 'Gestión y administración de usuarios del sistema.',
+    roles: ['Administrador']
+  },
 ];
 
 export default function DashboardCards({ rol = 'Publico' }) {

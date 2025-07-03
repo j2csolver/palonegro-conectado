@@ -172,7 +172,7 @@ export default function Tesoreria() {
       padding: '0.5rem 1.2rem'
     }}
   >
-    Saldo actual: ${ (state.chartData.ingresos - state.chartData.egresos).toFixed(2) }
+    Saldo actual: ${ (state.chartData.ingresos - state.chartData.egresos).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
   </div>
 </div>
       {!state.creando && (
@@ -294,47 +294,56 @@ export default function Tesoreria() {
             </tr>
           </thead>
           <tbody>
-            {state.transacciones.map(t => (
-              <tr key={t.id}>
-                <td>
-                  {/* Muestra la fecha en formato YYYY-MM-DD para evitar desfase */}
-                  {t.fecha ? t.fecha.slice(0, 10) : ''}
-                </td>
-                <td>{t.tipo}</td>
-                <td>{t.categoria}</td>
-                <td className={t.tipo === 'egreso' ? styles.tesoreriaEgreso : styles.tesoreriaIngreso}>
-                  {t.tipo === 'egreso' ? '-' : '+'}${Math.abs(t.monto).toFixed(2)}
-                </td>
-                <td>
-                  <span dangerouslySetInnerHTML={{ __html: t.descripcion }} />
-                </td>
-                <td>
-                  {t.comprobante ? (
-                    <span dangerouslySetInnerHTML={{ __html: t.comprobante }} />
-                  ) : (
-                    '—'
-                  )}
-                </td>
-                <td>
-                  <button
-                    type="button"
-                    className={styles.tesoreriaBtn}
-                    style={{ padding: '0.3rem 0.8rem', marginRight: 6, fontSize: '0.95rem' }}
-                    onClick={() => handleEditar(t)}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.tesoreriaBtn}
-                    style={{ background: '#d32f2f', padding: '0.3rem 0.8rem', fontSize: '0.95rem' }}
-                    onClick={() => handleEliminar(t.id)}
-                  >
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {state.transacciones
+              .slice() // copia para no mutar el estado
+              .sort((a, b) => {
+                // Ordena por fecha ascendente (menor a mayor)
+                if (!a.fecha) return -1;
+                if (!b.fecha) return 1;
+                return a.fecha.localeCompare(b.fecha);
+              })
+              .map(t => (
+                <tr key={t.id}>
+                  <td>
+                    {/* Muestra la fecha en formato YYYY-MM-DD para evitar desfase */}
+                    {t.fecha ? t.fecha.slice(0, 10) : ''}
+                  </td>
+                  <td>{t.tipo}</td>
+                  <td>{t.categoria}</td>
+                  <td className={t.tipo === 'egreso' ? styles.tesoreriaEgreso : styles.tesoreriaIngreso}>
+                    {t.tipo === 'egreso' ? '-' : '+'}$
+                    {Math.abs(t.monto).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td>
+                    <span dangerouslySetInnerHTML={{ __html: t.descripcion }} />
+                  </td>
+                  <td>
+                    {t.comprobante ? (
+                      <span dangerouslySetInnerHTML={{ __html: t.comprobante }} />
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      className={styles.tesoreriaBtn}
+                      style={{ padding: '0.3rem 0.8rem', marginRight: 6, fontSize: '0.95rem' }}
+                      onClick={() => handleEditar(t)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.tesoreriaBtn}
+                      style={{ background: '#d32f2f', padding: '0.3rem 0.8rem', fontSize: '0.95rem' }}
+                      onClick={() => handleEliminar(t.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       )}
@@ -350,7 +359,9 @@ export default function Tesoreria() {
             }}
           />
           <div>Ingresos</div>
-          <div className={styles.tesoreriaGraficoLabel}>${state.chartData.ingresos.toFixed(2)}</div>
+          <div className={styles.tesoreriaGraficoLabel}>
+            ${state.chartData.ingresos.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </div>
         </div>
         <div style={{ textAlign: 'center', flex: 1 }}>
           <div
@@ -361,7 +372,9 @@ export default function Tesoreria() {
             }}
           />
           <div>Egresos</div>
-          <div className={styles.tesoreriaGraficoLabel}>${state.chartData.egresos.toFixed(2)}</div>
+          <div className={styles.tesoreriaGraficoLabel}>
+            ${state.chartData.egresos.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </div>
         </div>
       </div>
     </section>

@@ -51,6 +51,8 @@ const router = express.Router();
  *                       type: string
  *                     rol:
  *                       type: string
+ *                     debeCambiarPassword:
+ *                       type: boolean
  *       401:
  *         description: Credenciales inválidas
  *       429:
@@ -65,7 +67,16 @@ router.post('/login', authLimiter, async (req, res) => {
   if (!valid) return res.status(401).json({ error: 'Credenciales inválidas' });
 
   const token = generarToken({ id: user.id, rol: user.rol });
-  res.json({ token, user: { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol } });
+  res.json({
+    token,
+    user: {
+      id: user.id,
+      nombre: user.nombre,
+      email: user.email,
+      rol: user.rol,
+      debeCambiarPassword: user.debeCambiarPassword // <-- Agregado aquí
+    }
+  });
 });
 
 export default router;

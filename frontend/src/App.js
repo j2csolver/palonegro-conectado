@@ -7,9 +7,11 @@ import Reglas from './sections/Reglas';
 import Quejas from './sections/Quejas';
 import Tesoreria from './sections/Tesoreria';
 import ResumenFinanciero from './sections/ResumenFinanciero';
+import Usuarios from './sections/Usuarios';
 import Encuestas from './sections/Encuestas';
 import Inicio from './sections/Inicio';
 import Login from './sections/Login';
+import CambiarPassword from './sections/CambiarPassword';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AppProvider } from './context/AppContext';
 import AdminDashboard from './dashboards/AdminDashboard';
@@ -31,6 +33,7 @@ function AppContent() {
           <Route path="/eventos" element={<Eventos />} />
           <Route path="/reglas" element={<Reglas />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/cambiar-password" element={<CambiarPassword />} />
 
           {/* Rutas privadas por rol */}
           <Route
@@ -48,6 +51,14 @@ function AppContent() {
             element={
               <PrivateRoute roles={['Administrador', 'Residente']}>
                 <Quejas />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/usuarios"
+            element={
+              <PrivateRoute roles={['Administrador']}>
+                <Usuarios />
               </PrivateRoute>
             }
           />

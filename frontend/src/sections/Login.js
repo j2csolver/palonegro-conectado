@@ -51,7 +51,11 @@ export default function Login() {
       const data = await res.json();
       setUser(data.user, data.token);
       setSuccess('¡Inicio de sesión exitoso!');
-      setTimeout(() => navigate('/dashboard'), 1000);
+      if (data.user.debeCambiarPassword) {
+        setTimeout(() => navigate('/cambiar-password'), 1000);
+      } else {
+        setTimeout(() => navigate('/dashboard'), 1000);
+      }
     } catch (err) {
       setError('Error de conexión');
     } finally {

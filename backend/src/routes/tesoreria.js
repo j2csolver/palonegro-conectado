@@ -4,9 +4,6 @@ import { verificarToken, requireRole } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Todas las rutas de tesorería solo pueden ser accedidas por usuarios con rol "Tesorero"
-router.use(verificarToken, requireRole('Tesorero'));
-
 /**
  * @swagger
  * tags:
@@ -36,10 +33,15 @@ router.use(verificarToken, requireRole('Tesorero'));
  *       403:
  *         description: Acceso denegado
  */
-router.get('/', async (req, res) => {
+router.get('/', verificarToken, async (req, res) => {
+  if (req.user.rol !== 'Tesorero' && req.user.rol !== 'Residente') {
+    return res.status(403).json({ error: 'Acceso denegado' });
+  }
   const transacciones = await prisma.transaccion.findMany();
   res.json(transacciones);
 });
+
+router.use(verificarToken, requireRole('Tesorero'));
 
 /**
  * @swagger

@@ -2,13 +2,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #0056b3;
-  padding: 1rem 2rem;
-  box-shadow: 0 2px 8px rgba(35, 41, 70, 0.08);
+  background: #222;
+  padding: 0.7rem 2rem;
+  min-height: 60px;
 }
 
 .brand {
-  font-size: 1.6rem;
+  font-size: 1.3rem;
   font-weight: bold;
   color: #fff;
   letter-spacing: 1px;
@@ -16,32 +16,14 @@
 
 .links {
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
   align-items: center;
 }
 
-a {
-  color: #fff;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  transition: background 0.2s, color 0.2s;
-}
-
-a:hover, .active {
-  background: #fff;
-  color: #007bff;
-}
-
-/* Estilos para enlaces en .links */
 .links a,
-.links a:visited,
-.links a:active,
-.links a:focus,
-.links a:hover,
-.links .active,
 .links button {
   display: inline-block;
   text-decoration: none !important;
@@ -58,16 +40,20 @@ a:hover, .active {
   transition: background 0.2s, color 0.2s;
 }
 
-/* Hover/focus para todos los botones/enlaces */
+.links .active {
+  background: #e0e0e0 !important;
+  color: #222 !important;
+  font-weight: bold;
+}
+
 .links a:hover,
 .links a:focus,
 .links button:hover,
 .links button:focus {
-  background: #87a7e8 !important;
+  background: #0056b3 !important;
   color: #fff !important;
 }
 
-/* Botón de cerrar sesión igual a los demás */
 .logout {
   background: #007bff !important;
   color: #fff !important;
@@ -93,7 +79,7 @@ a:hover, .active {
     padding: 1rem 0.5rem;
   }
   .brand {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin-bottom: 0.5rem;
     text-align: center;
   }
@@ -103,7 +89,9 @@ a:hover, .active {
     width: 100%;
     align-items: stretch;
   }
-  .links a, .logout {
+  .links a,
+  .links button,
+  .logout {
     width: 100%;
     text-align: center;
     padding: 0.7rem 0;
